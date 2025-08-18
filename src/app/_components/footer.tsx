@@ -21,7 +21,7 @@ export function Footer() {
             <div className="flex flex-col justify-center gap-6 items-center ">
               <div className="flex items-center gap-3">
                 <Link
-                  href="mailto:hello@jaythekastaway.com"
+                  href="mailto:jaeheonkim95@gmail.com"
                   className="mb-6 mx-3 py-4 w-52  flex justify-center items-center bg-black hover:bg-white hover:text-black border border-black text-white font-bold duration-200 transition-colors "
                 >
                   <div className="flex items-center gap-3">

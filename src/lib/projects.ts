@@ -1,99 +1,94 @@
 // src/lib/projects.ts
+export type Category = "events" | "portraits" | "products" | "weddings" | "videos";
 
-export type Category =
-  | "events"
-  | "portraits"
-  | "products"
-  | "weddings"
-  | "videos";
-
-export type Project = {
-  slug: string;
-  title: string;
-  category: Category;
-  date?: string;           // "YYYY-MM-DD"
-  thumbnail?: string;      // path under /public
-  images?: string[];       // for photo projects
-  video_embed?: string;    // for video projects
-  contentHtml: string;     // rendered markdown or placeholder
+export type Media = {
+  src: string;               // /public path
+  alt?: string;
+  col?: string;              // Tailwind grid placement
+  row?: string;
+  width?: number;            // for <Image> if you don't use fill
+  height?: number;
+  objectPosition?: string;   // e.g. "50% 20%" (maps to style)
+  sequence?: number;         // optional ordering within the section
 };
 
-// --- Temporary sample data (replace with your real content later) ---
-const SAMPLE_PROJECTS: Project[] = [
-  {
-    slug: "summit-2025",
-    title: "Summit 2025",
-    category: "events",
-    date: "2025-06-01",
-    thumbnail: "/images/events/summit-2025/cover.jpg",
-    images: ["/images/events/summit-2025/01.jpg"],
-    contentHtml: "<p>Event highlights from Summit 2025.</p>",
-  },
-  {
-    slug: "hana-studio-portraits",
-    title: "Hana — Studio Portraits",
-    category: "portraits",
-    date: "2024-11-20",
-    thumbnail: "/images/portraits/hana/cover.jpg",
-    images: [
-      "/images/portraits/hana/01.jpg",
-      "/images/portraits/hana/02.jpg",
-    ],
-    contentHtml: "<p>Quiet studio session with Hana.</p>",
-  },
-  {
-    slug: "jade-lamp",
-    title: "Jade Lamp — Product Set",
-    category: "products",
-    date: "2024-09-05",
-    thumbnail: "/images/products/jade-lamp/cover.jpg",
-    images: [
-      "/images/products/jade-lamp/01.jpg",
-      "/images/products/jade-lamp/02.jpg",
-    ],
-    contentHtml: "<p>Minimal tabletop product series.</p>",
-  },
-  {
-    slug: "lincoln-park-wedding",
-    title: "Lincoln Park Wedding",
-    category: "weddings",
-    date: "2023-08-17",
-    thumbnail: "/images/weddings/lincoln-park/cover.jpg",
-    images: [
-      "/images/weddings/lincoln-park/01.jpg",
-      "/images/weddings/lincoln-park/02.jpg",
-    ],
-    contentHtml: "<p>Golden hour. Soft chaos. Chicago.</p>",
-  },
-  {
-    slug: "echo",
-    title: "Echo — Short Film",
-    category: "videos",
-    date: "2024-03-14",
-    thumbnail: "/images/videos/echo/cover.jpg",
-    video_embed: "https://www.youtube.com/embed/XXXXXXXXXXX",
-    contentHtml: "<p>Poetic short on memory and light.</p>",
-  },
-];
+export type Section = {
+  key: Category;
+  title: string;             // UI heading
+  description?: string;      // short intro paragraph
+  cover?: string;            // optional hero/thumbnail for the section
+  media: Media[];
+};
 
-// --- API used by your pages ---
+// Dictionary keyed by category; easy to index in /work/[category]
+export const WORK: Record<Category, Section> = {
+  weddings: {
+    key: "weddings",
+    title: "Weddings",
+    description: "Intimate, candid moments from ceremonies and celebrations.",
+    cover: "/assets/images/weddings/cover.jpg",
+    media: [
+      {
+        src: "/assets/images/weddings/1.jpg",
+        col: "md:col-span-3",
+        row: "md:row-span-2",
+        width: 1000,
+        height: 666,
+        sequence: 1,
+      },
+      {
+        src: "/assets/images/weddings/2.jpg",
+        width: 1000,
+        height: 666,
+        sequence: 2,
+      },
+      {
+        src: "/assets/images/weddings/3.jpg",
+        col: "md:col-span-1 md:col-start-4",
+        row: "md:row-span-1 md:row-start-2",
+        sequence: 3,
+      },
+      {
+        src: "/assets/images/weddings/4.jpg",
+        col: "md:col-span-2",
+        row: "md:row-span-1",
+        objectPosition: "50% 20%",
+        sequence: 4,
+      },
+      {
+        src: "/assets/images/weddings/5.jpg",
+        col: "md:col-start-1",
+        row: "md:row-start-3",
+        width: 1000,
+        height: 666,
+        sequence: 5,
+      },
+      {
+        src: "/assets/images/weddings/6.jpg",
+        col: "md:col-start-2",
+        sequence: 6,
+      },
+      {
+        src: "/assets/images/weddings/7.jpg",
+        col: "md:col-span-2",
+        width: 1000,
+        height: 666,
+        sequence: 7,
+      },
+      {
+        src: "/assets/images/weddings/8.jpg",
+        col: "md:col-start-5 md:col-span-2",
+        row: "md:row-start-2 md:row-span-2",
+        width: 1000,
+        height: 666,
+        sequence: 8,
+      },
+    ],
+  },
 
-export function listProjects(): Omit<Project, "contentHtml">[] {
-  // Sort newest first by date (if present)
-  return [...SAMPLE_PROJECTS]
-    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
-    .map(({ contentHtml, ...rest }) => rest);
-}
-
-export async function getProject(
-  category: Category,
-  slug: string
-): Promise<Project> {
-  const found = SAMPLE_PROJECTS.find(
-    (p) => p.category === category && p.slug === slug
-  );
-  if (!found) {
-    throw new Error(`Project not found: ${category}/${slug}`);
-  }
-  return found;
-}
+  // Fill these out as you go
+  events:    { key: "events",    title: "Events",    media: [] },
+  portraits: { key: "portraits", title: "Portraits", media: [] },
+  products:  { key: "products",  title: "Product & Details", media: [] },
+  videos:    { key: "videos",    title: "Video",     media: [] },
+};
